@@ -25,6 +25,6 @@ class Gitvault < Formula
   end
 
   test do
-    system "#{bin}/gitvault", "--help"
+    system bin/"gitvault", "--help"
   end
 end
