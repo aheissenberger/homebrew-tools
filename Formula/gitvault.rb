@@ -1,8 +1,8 @@
 class Gitvault < Formula
   desc "Secure, Git-native vault for managing age-encrypted secrets"
   homepage "https://github.com/aheissenberger/gitvault"
-  license "MIT"
   version "0.2.18"
+  license "MIT"
 
   on_macos do
     on_arm do
