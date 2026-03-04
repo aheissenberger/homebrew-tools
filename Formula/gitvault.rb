@@ -1,18 +1,18 @@
 class Gitvault < Formula
   desc "Secure, Git-native vault for managing age-encrypted secrets"
   homepage "https://github.com/aheissenberger/gitvault"
-  version "0.4.10"
+  version "0.4.11"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/aheissenberger/gitvault/releases/download/v0.4.10/gitvault-macos-aarch64.tar.gz"
-      sha256 "a1fa66196598d29f11e7f9a5ffcf5c5705a66c34970c25bd57013a892c774b79"
+      url "https://github.com/aheissenberger/gitvault/releases/download/v0.4.11/gitvault-macos-aarch64.tar.gz"
+      sha256 "33245a96179ac21bb84148be3c780241f3f403d9dd1f8de50b7b08932cd3496e"
     end
 
     on_intel do
-      url "https://github.com/aheissenberger/gitvault/releases/download/v0.4.10/gitvault-macos-x86_64.tar.gz"
-      sha256 "bc1ae33c1c2da7bee085e62f5fca06b33ede09cc4ab9d3f140fe3f1465c22a97"
+      url "https://github.com/aheissenberger/gitvault/releases/download/v0.4.11/gitvault-macos-x86_64.tar.gz"
+      sha256 "53dd17a9ab19e56891b08949e848aa837ee65cdf21e42a37bad9b19f2b4705d9"
     end
   end
 
