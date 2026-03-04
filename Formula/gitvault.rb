@@ -7,12 +7,12 @@ class Gitvault < Formula
   on_macos do
     on_arm do
       url "https://github.com/aheissenberger/gitvault/releases/download/v0.3.1/gitvault-macos-aarch64.tar.gz"
-      sha256 "2fcd4b408584669cfe23dc1030deec7fb2717637cadc4fc9948841b9f6614d17"
+      sha256 "210d53abbd61a43e65b094dee6337963ee2c1d08e730a3efbff081d439b8ca02"
     end
 
     on_intel do
       url "https://github.com/aheissenberger/gitvault/releases/download/v0.3.1/gitvault-macos-x86_64.tar.gz"
-      sha256 "14e9b9cccd72929d3474de2fe89ba1d3d4927cc179bbd766447145fff2d2d81f"
+      sha256 "8134c6560b3542f123614532f1961090c09f8d5526fce8e206d72a57836b2f63"
     end
   end
 
