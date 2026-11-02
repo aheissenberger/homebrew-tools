@@ -26,7 +26,7 @@ brew install aheissenberger/tools/pseudofy
 
 To update the formula for a new pseudofy release `vX.Y.Z`:
 
-1. Set `version` and the version in the `url` field of `Formula/pseudofy.rb`.
+1. Set the new version in the `url` field of `Formula/pseudofy.rb`. Homebrew reads the version from the URL.
 2. Copy the SHA256 from the release asset `pseudofy-X.Y.Z-aarch64-apple-darwin.tar.gz.sha256` into the `sha256` field.
 3. Run the checks:
    ```sh
