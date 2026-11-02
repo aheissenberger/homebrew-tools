@@ -16,6 +16,26 @@ Fast bookkeeping engine with native Git SCM support for plain text accounting.
 brew install aheissenberger/tools/tackler
 ```
 
+### pseudofy
+
+Stable pseudonyms for names and email addresses in CSV and XLSX files. Apple Silicon Macs only.
+
+```sh
+brew install aheissenberger/tools/pseudofy
+```
+
+To update the formula for a new pseudofy release `vX.Y.Z`:
+
+1. Set `version` and the version in the `url` field of `Formula/pseudofy.rb`.
+2. Copy the SHA256 from the release asset `pseudofy-X.Y.Z-aarch64-apple-darwin.tar.gz.sha256` into the `sha256` field.
+3. Run the checks:
+   ```sh
+   brew style Formula/pseudofy.rb
+   brew audit --strict aheissenberger/tools/pseudofy
+   brew install aheissenberger/tools/pseudofy
+   brew test aheissenberger/tools/pseudofy
+   ```
+
 ## Updating a formula version
 
 1. Update `version` and the tag in the `url` field of the formula file.
