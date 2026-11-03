@@ -87,6 +87,9 @@ jobs:
         if: env.UNCHANGED != 'true'
         run: |
           brew tap aheissenberger/tools "${GITHUB_WORKSPACE}"
+          # Homebrew loads a formula of a third-party tap only after a trust.
+          # Trust this one formula, not the whole tap.
+          brew trust --formula aheissenberger/tools/pseudofy
           brew style "${FORMULA}"
           brew audit --strict aheissenberger/tools/pseudofy
           brew install aheissenberger/tools/pseudofy

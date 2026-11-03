@@ -24,6 +24,13 @@ Stable pseudonyms for names and email addresses in CSV and XLSX files. Apple Sil
 brew install aheissenberger/tools/pseudofy
 ```
 
+If Homebrew refuses to load the formula from an untrusted tap, trust this one
+formula first:
+
+```sh
+brew trust --formula aheissenberger/tools/pseudofy
+```
+
 To update the formula for a new pseudofy release `vX.Y.Z`, start the workflow
 `Update pseudofy formula` by hand:
 
