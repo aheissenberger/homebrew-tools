@@ -24,7 +24,23 @@ Stable pseudonyms for names and email addresses in CSV and XLSX files. Apple Sil
 brew install aheissenberger/tools/pseudofy
 ```
 
-To update the formula for a new pseudofy release `vX.Y.Z`:
+To update the formula for a new pseudofy release `vX.Y.Z`, start the workflow
+`Update pseudofy formula` by hand:
+
+```sh
+gh workflow run update-pseudofy.yml -R aheissenberger/homebrew-tools -f version=X.Y.Z
+gh run watch -R aheissenberger/homebrew-tools
+```
+
+Without `-f version=...`, the workflow uses the latest pseudofy release. It:
+
+1. downloads the release asset and checks its SHA256 and its build attestation
+   (`gh attestation verify --signer-workflow aheissenberger/pseudofy/.github/workflows/release.yml`);
+2. writes the new `url` and `sha256` into `Formula/pseudofy.rb`;
+3. runs `brew style`, `brew audit --strict`, `brew install`, and `brew test` on macOS;
+4. pushes the commit `pseudofy X.Y.Z` to `main` only if all checks pass.
+
+To update the formula by hand:
 
 1. Set the new version in the `url` field of `Formula/pseudofy.rb`. Homebrew reads the version from the URL.
 2. Copy the SHA256 from the release asset `pseudofy-X.Y.Z-aarch64-apple-darwin.tar.gz.sha256` into the `sha256` field.

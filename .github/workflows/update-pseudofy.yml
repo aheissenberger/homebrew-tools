@@ -1,0 +1,98 @@
+# Update Formula/pseudofy.rb to a pseudofy release. Start it by hand:
+#   gh workflow run update-pseudofy.yml -R aheissenberger/homebrew-tools -f version=0.3.0
+# Without a version, the workflow uses the latest pseudofy release.
+name: Update pseudofy formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "pseudofy version without v, for example 0.3.0. Empty: the latest release."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-pseudofy
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # Only main is the tap that `brew` reads.
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_REPO: aheissenberger/pseudofy
+      FORMULA: Formula/pseudofy.rb
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Select the version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          version="${INPUT_VERSION#v}"
+          if [ -z "${version}" ]; then
+            tag="$(gh release view -R "${SOURCE_REPO}" --json tagName --jq .tagName)"
+            version="${tag#v}"
+          fi
+          if ! printf '%s\n' "${version}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::version must look like 1.2.3"
+            exit 1
+          fi
+          echo "VERSION=${version}" >> "${GITHUB_ENV}"
+          echo "ASSET=pseudofy-${version}-aarch64-apple-darwin.tar.gz" >> "${GITHUB_ENV}"
+
+      - name: Download and verify the release
+        run: |
+          mkdir -p "${RUNNER_TEMP}/release"
+          cd "${RUNNER_TEMP}/release"
+          gh release download "v${VERSION}" -R "${SOURCE_REPO}" \
+            --pattern "${ASSET}" --pattern "${ASSET}.sha256"
+          shasum -a 256 -c "${ASSET}.sha256"
+          gh attestation verify "${ASSET}" -R "${SOURCE_REPO}" \
+            --signer-workflow "${SOURCE_REPO}/.github/workflows/release.yml" \
+            --source-ref "refs/tags/v${VERSION}"
+          sha="$(shasum -a 256 "${ASSET}" | cut -d ' ' -f 1)"
+          echo "SHA256=${sha}" >> "${GITHUB_ENV}"
+
+      - name: Update the formula
+        run: |
+          url="https://github.com/${SOURCE_REPO}/releases/download/v${VERSION}/${ASSET}"
+          grep -Eq '^  url "' "${FORMULA}"
+          grep -Eq '^  sha256 "' "${FORMULA}"
+          sed -i '' -E \
+            -e "s|^  url \".*\"$|  url \"${url}\"|" \
+            -e "s|^  sha256 \".*\"$|  sha256 \"${SHA256}\"|" \
+            "${FORMULA}"
+          git diff -- "${FORMULA}"
+          if git diff --quiet -- "${FORMULA}"; then
+            echo "UNCHANGED=true" >> "${GITHUB_ENV}"
+            echo "::notice::the formula already uses pseudofy ${VERSION}"
+          fi
+
+      - name: Commit locally
+        if: env.UNCHANGED != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "pseudofy ${VERSION}" -- "${FORMULA}"
+
+      - name: Check the formula with Homebrew
+        if: env.UNCHANGED != 'true'
+        run: |
+          brew tap aheissenberger/tools "${GITHUB_WORKSPACE}"
+          brew style "${FORMULA}"
+          brew audit --strict aheissenberger/tools/pseudofy
+          brew install aheissenberger/tools/pseudofy
+          brew test aheissenberger/tools/pseudofy
+          test "$(pseudofy --version)" = "pseudofy ${VERSION}"
+
+      - name: Push
+        if: env.UNCHANGED != 'true'
+        run: git push origin "HEAD:${GITHUB_REF_NAME}"
